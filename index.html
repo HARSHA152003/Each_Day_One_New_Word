@@ -1,0 +1,90 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light"><meta name="theme-color" content="#f57c00">
+<title>Words of the Day</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--or:#f57c00;--or2:#e65100;--tint:#fff3e6;--line:#ffd9b0;--ink:#2b1a0a;--mut:#8a6a4a;--err:#c62828}
+*{box-sizing:border-box}html,body{margin:0}
+body{font:16px/1.55 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#fff;color:var(--ink);padding:env(safe-area-inset-top) 0 calc(32px + env(safe-area-inset-bottom))}
+.bar{background:var(--or);color:#fff;padding:calc(18px + env(safe-area-inset-top)) 16px 22px;margin-top:calc(-1 * env(safe-area-inset-top))}
+.bar>div,.wrap{max-width:640px;margin:auto}.bar>div{display:flex;justify-content:space-between;align-items:center;gap:12px}
+h1{font:700 26px/1.15 Fraunces,Georgia,serif;margin:0}.sub{opacity:.9;font-size:13px;margin-top:2px}
+.wrap{padding:0 16px}
+button,input,select,textarea{font:inherit;color:inherit}
+.ib{border:1.5px solid var(--line);background:#fff;border-radius:12px;width:42px;height:42px;cursor:pointer;color:var(--or2);display:grid;place-items:center;flex:none}
+.bar .ib{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.5);color:#fff}
+.ib.on{background:var(--or);border-color:var(--or);color:#fff}
+.btn{border:0;background:var(--or);color:#fff;padding:14px 18px;border-radius:12px;font-weight:600;cursor:pointer;width:100%}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+input,select,textarea{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;outline:0}
+input:focus,textarea:focus,select:focus{border-color:var(--or)}
+label{display:block;font-size:13px;font-weight:600;color:var(--mut);margin:0 0 6px}
+h2{font:700 19px Fraunces,Georgia,serif;margin:0}
+.sec{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:26px 0 10px}
+.pill{background:var(--tint);color:var(--or2);font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px}
+.form{margin-top:-14px;background:#fff;border:1.5px solid var(--line);border-radius:18px;padding:16px;display:grid;gap:14px;box-shadow:0 6px 18px rgba(245,124,0,.14)}
+.msg{font-size:13px;color:var(--err);min-height:18px;margin-top:5px}
+.tw{border-radius:16px;overflow:hidden;margin-bottom:10px;border:1.5px solid var(--or)}
+.tw-h{background:var(--or);color:#fff;padding:12px 16px;font:700 24px/1.2 Fraunces,Georgia,serif}
+.tw-b{background:var(--tint);padding:12px 16px;white-space:pre-wrap;color:var(--ink)}
+.empty{text-align:center;color:var(--mut);padding:26px 12px;background:var(--tint);border-radius:16px}
+.tools{display:flex;gap:8px;margin-bottom:10px;align-items:center}.tools select{width:auto;flex:1}
+#sw{display:none;margin-bottom:10px}#sw.show{display:block}
+.it{border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:8px}
+.it-h{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.it .w{font:700 19px Fraunces,Georgia,serif}
+.it .ib{width:38px;height:38px;border-radius:10px}
+.it .m{margin-top:8px;padding-left:10px;border-left:3px solid var(--or);white-space:pre-wrap}
+.it .d{font-size:12px;color:var(--mut);margin-top:6px}
+#err{color:var(--err);font-size:14px;margin-top:10px}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;opacity:0;pointer-events:none;transition:.25s;max-width:90%;font-weight:500}
+#toast.show{opacity:1;transform:translateX(-50%)}
+</style></head><body>
+<div class="bar"><div><div><h1>Words of the day</h1><div class="sub" id="sub">Loading…</div></div>
+<button class="ib" id="ref" aria-label="Refresh"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5"/></svg></button></div></div>
+<div class="wrap"><div id="err"></div>
+<div class="sec"><h2>Today's words</h2><span class="pill" id="tc">0</span></div><div id="today"></div>
+<div class="sec"><h2>Earlier words</h2><span class="pill" id="ec">0</span></div>
+<div class="tools"><button class="ib" id="sb" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
+<select id="sort" aria-label="Sort"><option value="new">Newest first</option><option value="old">Oldest first</option><option value="az">A to Z</option><option value="za">Z to A</option></select>
+<button class="ib" id="all" aria-label="Show or hide all meanings"></button></div>
+<input id="sw" type="search" placeholder="Search words or meanings" autocomplete="off">
+<div id="list"></div></div><div id="toast"></div>
+<script>
+const API="https://script.google.com/macros/s/AKfycbwNrL7_kt1k8IeVFmSVagUfwm4bcA_wgASWUO6gvOA0emz4KK-0dH_ntKwqQSWy2crd/exec";
+let WORDS=[],OPEN=new Set(),ALL=false;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const today=()=>{const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+const fd=s=>s?new Date(s+'T00:00').toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}):'';
+const norm=s=>String(s||'').trim().toLowerCase().replace(/\s+/g,' ');
+const EYE='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>%SL%</svg>';
+const eye=off=>EYE.replace('%SL%',off?'<path d="M4 4l16 16"/>':'');
+const toast=m=>{const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),2800)};
+async function load(){
+ $('sub').textContent='Syncing…';$('err').textContent='';
+ try{const j=await(await fetch(API+'?action=getAll')).json();
+  if(j.status!=='ok')throw new Error(j.message);WORDS=j.data.vocab||[];
+  $('sub').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'})}
+ catch(e){$('err').textContent='Could not load words ('+e.message+'). Check your connection and tap refresh.';$('sub').textContent='Offline'}
+ render()}
+function render(){
+ const td=today(),T=WORDS.filter(v=>v.date===td).sort((a,b)=>a._row-b._row);
+ $('tc').textContent=T.length+(T.length===1?' word':' words');
+ $('today').innerHTML=T.length?T.map(v=>`<div class="tw"><div class="tw-h">${esc(v.word)}</div><div class="tw-b">${esc(v.meaning)}</div></div>`).join(''):'<div class="empty">No words for today yet. Check back soon.</div>';
+ const q=norm($('sw').value),s=$('sort').value;
+ const E=WORDS.filter(v=>v.date!==td&&(!q||norm(v.word+' '+v.meaning).includes(q))).sort((a,b)=>
+  s==='az'?a.word.localeCompare(b.word,undefined,{sensitivity:'base'}):s==='za'?b.word.localeCompare(a.word,undefined,{sensitivity:'base'}):
+  s==='old'?(a.date||'').localeCompare(b.date||'')||a._row-b._row:(b.date||'').localeCompare(a.date||'')||b._row-a._row);
+ $('ec').textContent=E.length;
+ $('all').innerHTML=eye(ALL);$('all').classList.toggle('on',ALL);
+ $('list').innerHTML=E.length?E.map(v=>{const o=ALL||OPEN.has(v._row);
+  return `<div class="it"><div class="it-h"><span class="w">${esc(v.word)}</span><button class="ib ${o?'on':''}" onclick="tog(${v._row})" aria-label="Show meaning">${eye(o)}</button></div>${o?`<div class="m">${esc(v.meaning)}</div>`:''}<div class="d">${fd(v.date)}</div></div>`}).join(''):'<div class="empty">No earlier words found.</div>'}
+function tog(r){OPEN.has(r)?OPEN.delete(r):OPEN.add(r);render()}
+$('ref').onclick=load;$('sort').onchange=render;$('sw').oninput=render;
+$('all').onclick=()=>{ALL=!ALL;render()};
+$('sb').onclick=()=>{const s=$('sw');s.classList.toggle('show');$('sb').classList.toggle('on',s.classList.contains('show'));if(s.classList.contains('show'))s.focus();else{s.value='';render()}};
+
+load();
+</script></body></html>
