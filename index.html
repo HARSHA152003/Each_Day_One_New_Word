@@ -82,7 +82,7 @@ async function load(){
   $('sub').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'})}
  catch(e){$('err').textContent='Could not load words ('+e.message+'). Check your connection and tap refresh.';$('sub').textContent='Offline'}
  render()}
-const body=v=>'<b>Meaning :</b> '+esc(v.meaning)+(v.example?'<div class="ex"><b>Example or use :</b> '+esc(v.example)+'</div>':'');
+const body=v=>'<b>Meaning :</b> '+esc(v.meaning)+(v.example?'<div class="ex"><b>Example or Usage  :</b> '+esc(v.example)+'</div>':'');
 function render(){
  const td=today(),T=WORDS.filter(v=>v.date===td).sort((a,b)=>a.id-b.id);
  $('tc').textContent=T.length+(T.length===1?' word':' words');
