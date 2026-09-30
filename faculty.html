@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="color-scheme" content="light"><meta name="theme-color" content="#f57c00">
+<meta name="color-scheme" content="light"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#f57c00">
 <title>Add Words of the Day</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -37,73 +37,123 @@ h2{font:700 19px Fraunces,Georgia,serif;margin:0}
 .it .ib{width:38px;height:38px;border-radius:10px}
 .it .m{margin-top:8px;padding-left:10px;border-left:3px solid var(--or);white-space:pre-wrap}
 .it .d{font-size:12px;color:var(--mut);margin-top:6px}
+.lb{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--or2);margin:12px 0 2px}.ex{font-style:italic}.tw-x{background:#fff;padding:2px 16px 14px;border-top:1.5px dashed var(--line);white-space:pre-wrap}
+.ex{margin-top:8px}.xt{margin-top:8px}.tw-h{display:flex;justify-content:space-between;align-items:center;gap:10px}.tw-h .ib{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.55);color:#fff;width:36px;height:36px;border-radius:10px}
 #err{color:var(--err);font-size:14px;margin-top:10px}
 #toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;opacity:0;pointer-events:none;transition:.25s;max-width:90%;font-weight:500}
 #toast.show{opacity:1;transform:translateX(-50%)}
+nav{max-width:640px;margin:14px auto 0;display:flex;gap:6px}nav button{flex:1;border:1.5px solid rgba(255,255,255,.5);background:rgba(255,255,255,.18);color:#fff;border-radius:10px;padding:9px 6px;font-weight:600;cursor:pointer}nav button.on{background:#fff;color:var(--or2);border-color:#fff}.pg{display:none}.pg.on{display:block}.ex{margin-top:1.55em;font-style:normal}
+.cal{border:1.5px solid var(--line);border-radius:16px;padding:12px}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.ch b{font:700 17px Fraunces,Georgia,serif}
+.ch .ib{width:36px;height:36px;border-radius:10px;font-size:22px;line-height:1}.ch .ib:disabled{opacity:.35}
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.wd{text-align:center;font-size:12px;font-weight:600;color:var(--mut);padding:4px 0}
+.dy{position:relative;aspect-ratio:1;border:0;border-radius:10px;background:none;font:inherit;color:#b9a48c;display:grid;place-items:center;padding:0}
+.dy.has{background:var(--tint);color:var(--ink);font-weight:600;cursor:pointer}
+.dy i{position:absolute;bottom:3px;font-style:normal;font-size:9px;background:var(--or);color:#fff;border-radius:999px;padding:0 5px;line-height:14px}
+.dy.td{outline:2px solid var(--or);outline-offset:-2px}
+.dy.sel{background:var(--or);color:#fff}.dy.sel i{background:#fff;color:var(--or2)}
 </style></head><body>
 <div class="bar"><div><div><h1>Words of the day</h1><div class="sub" id="sub">Loading…</div></div>
-<button class="ib" id="ref" aria-label="Refresh"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5"/></svg></button></div></div>
-<div class="wrap"><form class="form" id="f" novalidate>
-<div><label for="w">Word</label><input id="w" autocomplete="off" autocapitalize="none" placeholder="e.g. Word" style="font:600 20px Fraunces,Georgia,serif"><div class="msg" id="dm"></div></div>
-<div><label for="m">Meaning &amp; example sentence</label><textarea id="m" rows="3" placeholder="What it means"></textarea></div>
-<button class="btn" id="add">Add to today's words</button></form><div id="err"></div>
+<button class="ib" id="ref" aria-label="Refresh"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5"/></svg></button></div><nav><button class="on" data-t="today">Add / Today</button><button data-t="cal">Calendar</button><button data-t="earlier">Earlier</button></nav></div>
+<div class="wrap"><div class="pg on" id="p-today"><form class="form" id="f" novalidate>
+<div><label for="w">Word</label><input id="w" autocomplete="off" autocapitalize="none" placeholder="e.g. Ephemeral" style="font:600 20px Fraunces,Georgia,serif"><div class="msg" id="dm"></div></div>
+<div><label for="m">Meaning</label><textarea id="m" rows="2" placeholder="What the word means"></textarea></div>
+<div><label for="x">Example <span style="font-weight:400">(optional)</span></label><textarea id="x" rows="2" placeholder="A sentence using the word"></textarea></div>
+<button class="btn" id="add">Add to today's words</button>
+<button type="button" class="btn" id="cx" style="display:none;background:#fff;color:var(--or2);border:1.5px solid var(--line)">Cancel editing</button></form><div id="err"></div>
 <div class="sec"><h2>Today's words</h2><span class="pill" id="tc">0</span></div><div id="today"></div>
-<div class="sec"><h2>Earlier words</h2><span class="pill" id="ec">0</span></div>
+</div><div class="pg" id="p-cal"><div class="sec"><h2>Calendar</h2><span class="pill" id="cm">0 words</span></div>
+<div class="cal"><div class="ch"><button class="ib" id="pm" aria-label="Previous month">&#8249;</button><b id="cl"></b><button class="ib" id="nm" aria-label="Next month">&#8250;</button></div><div class="cg" id="cg"></div></div><div id="dp"></div></div><div class="pg" id="p-earlier"><div class="sec"><h2>Earlier words</h2><span class="pill" id="ec">0</span></div>
 <div class="tools"><button class="ib" id="sb" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
 <select id="sort" aria-label="Sort"><option value="new">Newest first</option><option value="old">Oldest first</option><option value="az">A to Z</option><option value="za">Z to A</option></select>
 <button class="ib" id="all" aria-label="Show or hide all meanings"></button></div>
 <input id="sw" type="search" placeholder="Search words or meanings" autocomplete="off">
-<div id="list"></div></div><div id="toast"></div>
+<div id="list"></div></div></div><div id="toast"></div>
 <script>
-const API="https://script.google.com/macros/s/AKfycbwNrL7_kt1k8IeVFmSVagUfwm4bcA_wgASWUO6gvOA0emz4KK-0dH_ntKwqQSWy2crd/exec";
+const SB_URL="https://vkwnrhybjwgcqtirysgl.supabase.co",SB_KEY="sb_publishable_Dv0CQQD-cWLm6Ddk_DrGPw_ROFQ6krR";
+const H=SB_KEY.startsWith("eyJ")?{apikey:SB_KEY,Authorization:"Bearer "+SB_KEY}:{apikey:SB_KEY};
+async function fetchAll(){let all=[],from=0;
+ for(;;){const r=await fetch(SB_URL+"/rest/v1/words?select=id,word,meaning,example,date&order=id.desc",{headers:{...H,Range:from+"-"+(from+999)}});
+  if(!r.ok){let t="";try{t=(await r.json()).message||""}catch(e){}throw new Error("HTTP "+r.status+(t?": "+t:""))}const p=await r.json();all=all.concat(p);if(p.length<1000)break;from+=1000}
+ return all}
 let WORDS=[],OPEN=new Set(),ALL=false;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const today=()=>{const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
 const fd=s=>s?new Date(s+'T00:00').toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}):'';
+const rel=s=>{if(!s)return'';const n=Math.round((new Date(today()+'T00:00')-new Date(s+'T00:00'))/864e5);return n<=0?'Today':n===1?'Yesterday':n+' days ago'};
 const norm=s=>String(s||'').trim().toLowerCase().replace(/\s+/g,' ');
 const EYE='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>%SL%</svg>';
 const eye=off=>EYE.replace('%SL%',off?'<path d="M4 4l16 16"/>':'');
 const toast=m=>{const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),2800)};
 async function load(){
  $('sub').textContent='Syncing…';$('err').textContent='';
- try{const j=await(await fetch(API+'?action=getAll')).json();
-  if(j.status!=='ok')throw new Error(j.message);WORDS=j.data.vocab||[];
+ try{WORDS=await fetchAll();
   $('sub').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'})}
  catch(e){$('err').textContent='Could not load words ('+e.message+'). Check your connection and tap refresh.';$('sub').textContent='Offline'}
  render()}
+let ACT=v=>'';
+const body=v=>'<b>Meaning :</b> '+esc(v.meaning)+(v.example?'<div class="ex"><b>Example or use :</b> '+esc(v.example)+'</div>':'');
 function render(){
- const td=today(),T=WORDS.filter(v=>v.date===td).sort((a,b)=>a._row-b._row);
+ const td=today(),T=WORDS.filter(v=>v.date===td).sort((a,b)=>a.id-b.id);
  $('tc').textContent=T.length+(T.length===1?' word':' words');
- $('today').innerHTML=T.length?T.map(v=>`<div class="tw"><div class="tw-h">${esc(v.word)}</div><div class="tw-b">${esc(v.meaning)}</div></div>`).join(''):'<div class="empty">No words added today yet. Use the form above to add the first one.</div>';
+ $('today').innerHTML=T.length?T.map(v=>`<div class="tw"><div class="tw-h"><span>${esc(v.word)}</span>${ACT(v)}</div><div class="tw-b">${body(v)}</div></div>`).join(''):'<div class="empty">No words added today yet. Use the form above to add the first one.</div>';
  const q=norm($('sw').value),s=$('sort').value;
- const E=WORDS.filter(v=>v.date!==td&&(!q||norm(v.word+' '+v.meaning).includes(q))).sort((a,b)=>
+ const E=WORDS.filter(v=>v.date!==td&&(!q||norm(v.word+' '+v.meaning+' '+(v.example||'')).includes(q))).sort((a,b)=>
   s==='az'?a.word.localeCompare(b.word,undefined,{sensitivity:'base'}):s==='za'?b.word.localeCompare(a.word,undefined,{sensitivity:'base'}):
-  s==='old'?(a.date||'').localeCompare(b.date||'')||a._row-b._row:(b.date||'').localeCompare(a.date||'')||b._row-a._row);
+  s==='old'?(a.date||'').localeCompare(b.date||'')||a.id-b.id:(b.date||'').localeCompare(a.date||'')||b.id-a.id);
  $('ec').textContent=E.length;
  $('all').innerHTML=eye(ALL);$('all').classList.toggle('on',ALL);
- $('list').innerHTML=E.length?E.map(v=>{const o=ALL||OPEN.has(v._row);
-  return `<div class="it"><div class="it-h"><span class="w">${esc(v.word)}</span><button class="ib ${o?'on':''}" onclick="tog(${v._row})" aria-label="Show meaning">${eye(o)}</button></div>${o?`<div class="m">${esc(v.meaning)}</div>`:''}<div class="d">${fd(v.date)}</div></div>`}).join(''):'<div class="empty">No earlier words found.</div>'}
+ $('list').innerHTML=E.length?E.map(v=>{const o=ALL||OPEN.has(v.id);
+  return `<div class="it"><div class="it-h"><span class="w">${esc(v.word)}</span><span style="display:flex;gap:6px">${ACT(v)}<button class="ib ${o?'on':''}" onclick="tog(${v.id})" aria-label="Show meaning">${eye(o)}</button></span></div>${o?`<div class="m">${body(v)}</div>`:''}<div class="d" title="${fd(v.date)}">${rel(v.date)}</div></div>`}).join(''):'<div class="empty">No earlier words found.</div>';renderCal()}
+const NOW=new Date();let CM={y:NOW.getFullYear(),m:NOW.getMonth()},SEL=null;
+function renderCal(){
+ const by={};WORDS.forEach(v=>{(by[v.date]=by[v.date]||[]).push(v)});
+ const {y,m}=CM,first=new Date(y,m,1).getDay(),n=new Date(y,m+1,0).getDate(),td=today(),p=x=>String(x).padStart(2,'0');
+ $('cl').textContent=new Date(y,m,1).toLocaleDateString(undefined,{month:'long',year:'numeric'});
+ $('nm').disabled=(y===NOW.getFullYear()&&m===NOW.getMonth());
+ let h=['S','M','T','W','T','F','S'].map(d=>`<div class="wd">${d}</div>`).join('')+'<div></div>'.repeat(first),cnt=0;
+ for(let d=1;d<=n;d++){const k=`${y}-${p(m+1)}-${p(d)}`,c=(by[k]||[]).length;cnt+=c;
+  h+=`<button class="dy${c?' has':''}${k===td?' td':''}${k===SEL?' sel':''}" ${c?`onclick="pick('${k}')"`:'disabled'}>${d}${c?`<i>${c}</i>`:''}</button>`}
+ $('cg').innerHTML=h;$('cm').textContent=cnt+(cnt===1?' word':' words')+' this month';
+ const L=(SEL&&by[SEL])||[];
+ $('dp').innerHTML=L.length?`<div class="sec" style="margin-top:14px"><h2 style="font-size:16px">${fd(SEL)}</h2><button class="pill" style="border:0;cursor:pointer" onclick="SEL=null;render()">Close</button></div>`+L.slice().sort((a,b)=>a.id-b.id).map(v=>`<div class="tw"><div class="tw-h"><span>${esc(v.word)}</span>${ACT(v)}</div><div class="tw-b">${body(v)}</div></div>`).join(''):''}
+function pick(k){SEL=SEL===k?null:k;render()}
+$('pm').onclick=()=>{CM.m--;if(CM.m<0){CM.m=11;CM.y--}renderCal()};
+$('nm').onclick=()=>{CM.m++;if(CM.m>11){CM.m=0;CM.y++}renderCal()};
 function tog(r){OPEN.has(r)?OPEN.delete(r):OPEN.add(r);render()}
 $('ref').onclick=load;$('sort').onchange=render;$('sw').oninput=render;
 $('all').onclick=()=>{ALL=!ALL;render()};
 $('sb').onclick=()=>{const s=$('sw');s.classList.toggle('show');$('sb').classList.toggle('on',s.classList.contains('show'));if(s.classList.contains('show'))s.focus();else{s.value='';render()}};
-const dupOf=w=>WORDS.find(v=>norm(v.word)===norm(w));
+let EDIT=null;const capW=s=>s.replace(/^\s*\p{L}/u,c=>c.toUpperCase()),capS=s=>s.replace(/(^|[.!?]\s+)(\p{L})/gu,(m,a,b)=>a+b.toUpperCase());
+
+const daysAgo=s=>Math.floor((new Date(today()+'T00:00')-new Date(s+'T00:00'))/864e5);
+ACT=v=>`<button class="ib" onclick="edit(${v.id})" aria-label="Edit"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>`;
+const dupOf=w=>WORDS.find(v=>v.id!==EDIT&&norm(v.word)===norm(w));
+function resetForm(){EDIT=null;['w','m','x'].forEach(i=>$(i).value='');$('add').textContent="Add to today's words";$('cx').style.display='none';chk()}
+function edit(id){const v=WORDS.find(x=>x.id===id);if(!v)return;EDIT=id;document.querySelector('nav button[data-t=today]').click();
+ $('w').value=v.word;$('m').value=v.meaning||'';$('x').value=v.example||'';
+ $('add').textContent='Save changes';$('cx').style.display='block';chk();toast('Editing "'+v.word+'"');window.scrollTo({top:0,behavior:'smooth'});$('m').focus()}
+$('cx').onclick=resetForm;
 function chk(){const w=$('w').value,d=w.trim()&&dupOf(w);
  $('dm').textContent=d?'"'+d.word+'" is already in the list (added '+fd(d.date)+'). Enter a different word.':'';
  $('add').disabled=!!d;return !d}
 $('w').oninput=chk;
 $('f').onsubmit=async e=>{e.preventDefault();
- const word=$('w').value.trim().replace(/\s+/g,' '),meaning=$('m').value.trim();
+ const word=capW($('w').value.trim().replace(/\s+/g,' ')),meaning=capS($('m').value.trim()),example=capS($('x').value.trim());
  if(!word){toast('Please enter the word');$('w').focus();return}
  if(!meaning){toast('Please enter the meaning');$('m').focus();return}
  const b=$('add');b.disabled=true;b.textContent='Checking…';
  try{await load();if(!chk()){toast('This word already exists');return}
   b.textContent='Saving…';
-  const j=await(await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({targetSheet:'Reading_And_Vocab',date:today(),word,meaning})})).json();
-  if(j.status!=='ok')throw new Error(j.message);
-  $('w').value='';$('m').value='';toast('\u2713 "'+word+'" added');await load();$('w').focus()}
+  const r=await fetch(SB_URL+'/rest/v1/words'+(EDIT?'?id=eq.'+EDIT:''),{method:EDIT?'PATCH':'POST',headers:{...H,'Content-Type':'application/json',Prefer:'return=representation'},body:JSON.stringify(EDIT?{word,meaning,example}:{word,meaning,example,date:today()})});
+  if(r.status===409){await load();chk();toast('This word already exists');return}
+  if(!r.ok)throw new Error((await r.text()).slice(0,120));
+  if(EDIT&&!(await r.json()).length)throw new Error('edit not allowed - run words_fix.sql in Supabase');
+  toast('\u2713 "'+word+(EDIT?'" updated':'" added'));resetForm();await load();$('w').focus()}
  catch(er){toast('Not saved: '+er.message)}
- finally{b.textContent="Add to today's words";b.disabled=!!(($('w').value.trim())&&dupOf($('w').value))}}
+ finally{b.textContent=EDIT?'Save changes':"Add to today's words";b.disabled=!!(($('w').value.trim())&&dupOf($('w').value))}}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.pg').forEach(p=>p.classList.toggle('on',p.id==='p-'+b.dataset.t));window.scrollTo(0,0)});
 load();
 </script></body></html>
