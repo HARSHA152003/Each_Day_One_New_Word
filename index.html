@@ -61,7 +61,7 @@ nav{max-width:640px;margin:14px auto 0;display:flex;gap:6px}nav button{flex:1;bo
 <input id="sw" type="search" placeholder="Search words or meanings" autocomplete="off">
 <div id="list"></div></div></div>
 <script>
-const SB_URL="",SB_KEY="";
+const SB_URL="https://vkwnrhybjwgcqtirysgl.supabase.co",SB_KEY="sb_publishable_Dv0CQQD-cWLm6Ddk_DrGPw_ROFQ6krR";
 const H=SB_KEY.startsWith("eyJ")?{apikey:SB_KEY,Authorization:"Bearer "+SB_KEY}:{apikey:SB_KEY};
 async function fetchAll(){let all=[],from=0;
  for(;;){const r=await fetch(SB_URL+"/rest/v1/words?select=id,word,meaning,example,date&order=id.desc",{headers:{...H,Range:from+"-"+(from+999)}});
