@@ -94,11 +94,11 @@ async function load(){
  catch(e){$('err').textContent='Could not load words ('+e.message+'). Check your connection and tap refresh.';$('sub').textContent='Offline'}
  render()}
 let ACT=v=>'';
-const body=v=>'<b>Meaning :</b> '+esc(v.meaning)+(v.example?'<div class="ex"><b>Example or use :</b> '+esc(v.example)+'</div>':'');
+const body=v=>'<b>Meaning :</b> '+esc(v.meaning)+(v.example?'<div class="ex"><b>Example or Usage  :</b> '+esc(v.example)+'</div>':'');
 function render(){
  const td=today(),T=WORDS.filter(v=>v.date===td).sort((a,b)=>a.id-b.id);
  $('tc').textContent=T.length+(T.length===1?' word':' words');
- $('today').innerHTML=T.length?T.map(v=>`<div class="tw"><div class="tw-h"><span>${esc(v.word)}</span>${ACT(v)}</div><div class="tw-b">${body(v)}</div></div>`).join(''):'<div class="empty">No words added today yet. Use the form above to add the first one.</div>';
+ $('today').innerHTML=T.length?T.map(v=>`<div class="tw"><div class="tw-h"><span>${esc(v.word)}</span>${ACT(v)}</div><div class="tw-b">${body(v)}</div></div>`).join(''):'<div class="empty">No words added today yet. Usage  the form above to add the first one.</div>';
  const q=norm($('sw').value),s=$('sort').value;
  const E=WORDS.filter(v=>v.date!==td&&(!q||norm(v.word+' '+v.meaning+' '+(v.example||'')).includes(q))).sort((a,b)=>
   s==='az'?a.word.localeCompare(b.word,undefined,{sensitivity:'base'}):s==='za'?b.word.localeCompare(a.word,undefined,{sensitivity:'base'}):
