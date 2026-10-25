@@ -358,6 +358,7 @@ button:focus-visible, .opt:focus-visible, .topnav a:focus-visible {
     <div class="options" id="options" role="group" aria-label="Answer options"></div>
     <div id="reveal" class="hidden"></div>
     <div class="actions">
+      <button class="btn ghost" id="prevBtn" type="button" hidden>Previous</button>
       <span class="hint" id="hint">Choose an answer to continue.</span>
       <button class="btn" id="nextBtn" type="button" disabled>Next</button>
     </div>
@@ -512,7 +513,7 @@ button:focus-visible, .opt:focus-visible, .topnav a:focus-visible {
 
   function renderQ() {
     var q = qs[idx];
-    locked = q.chosen !== null;
+    locked = q.chosen !== null && cfg.reveal === "instant";
     $("qNum").textContent = idx + 1;
     $("qTotal").textContent = qs.length;
     $("qScore").textContent = cfg.reveal === "instant" ? correctCount() : answeredCount();
@@ -537,9 +538,11 @@ button:focus-visible, .opt:focus-visible, .topnav a:focus-visible {
     $("reveal").innerHTML = "";
     $("nextBtn").textContent = idx === qs.length - 1 ? "See result" : "Next";
     $("hint").textContent = cfg.reveal === "instant" ? "Choose an answer to see if you are right." : "Choose an answer, then continue.";
+    $("prevBtn").hidden = idx === 0;
+    $("prevBtn").disabled = idx === 0;
 
-    if (locked) paintAnswered(q);
-    $("nextBtn").disabled = !locked;
+    if (q.chosen !== null) paintAnswered(q);
+    $("nextBtn").disabled = q.chosen === null;
   }
 
   function answeredCount() {
@@ -549,10 +552,10 @@ button:focus-visible, .opt:focus-visible, .topnav a:focus-visible {
   }
 
   function choose(text) {
-    if (locked) return;
+    if (cfg.reveal === "instant" && locked) return;
     var q = qs[idx];
     q.chosen = text;
-    locked = true;
+    locked = cfg.reveal === "instant";
     paintAnswered(q);
     $("nextBtn").disabled = false;
     $("nextBtn").focus({ preventScroll: true });
@@ -563,12 +566,15 @@ button:focus-visible, .opt:focus-visible, .topnav a:focus-visible {
     var buttons = $("options").querySelectorAll(".opt");
     buttons.forEach(function (b) {
       var v = b.getAttribute("data-value");
-      b.disabled = true;
+      b.disabled = false;
+      b.classList.remove("picked", "correct", "wrong");
+      b.querySelector(".mark").textContent = "";
       if (cfg.reveal === "instant") {
+        b.disabled = true;
         if (v === q.answer) { b.classList.add("correct"); b.querySelector(".mark").textContent = "Correct"; }
         else if (v === q.chosen) { b.classList.add("wrong"); b.querySelector(".mark").textContent = "Your answer"; }
-      } else {
-        if (v === q.chosen) { b.classList.add("picked"); b.querySelector(".mark").textContent = "Selected"; }
+      } else if (q.chosen !== null && v === q.chosen) {
+        b.classList.add("picked"); b.querySelector(".mark").textContent = "Selected";
       }
     });
     if (cfg.reveal === "instant") showReveal(q);
@@ -584,8 +590,15 @@ button:focus-visible, .opt:focus-visible, .topnav a:focus-visible {
       '<p class="def"><b>' + escapeHtml(q.word) + "</b>: " + escapeHtml(q.meaning) + "</p>";
   }
 
+  $("prevBtn").addEventListener("click", function () {
+    if (idx === 0) return;
+    idx--;
+    renderQ();
+    window.scrollTo({ top: $("quiz").offsetTop - 12, behavior: "smooth" });
+  });
+
   $("nextBtn").addEventListener("click", function () {
-    if (!locked) return;
+    if (qs[idx] && qs[idx].chosen === null) return;
     idx++;
     if (idx < qs.length) {
       renderQ();
